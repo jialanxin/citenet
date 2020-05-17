@@ -1,6 +1,4 @@
 import re
-import typer
-from tabulate import tabulate
 import math
 
 class Article(object):
@@ -13,10 +11,6 @@ class Article(object):
         self.lcr = 0
         self.lcs_list = []
         self.title = ti
-
-app = typer.Typer()
-
-
 
 def core(filename):
     local_article_list = []
@@ -70,46 +64,47 @@ def core(filename):
                     article_source.lcs_list.append(ref)
     return local_article_list
 
+article_list = core("savedrecs.txt")
 
-@app.command()
-def lcs(filename:str,page:int=typer.Option(0,help="Display articles of next pages")):
-    local_article_list = core(filename)
-    lcs_sort_list = sorted(local_article_list,key=lambda atc:atc.lcs,reverse=True)
-    lcs_show_list = lcs_sort_list[page*20:(page+1)*20]
-    lcs_show_table = [(atc.title, atc.doi, atc.lcs,atc.lcr,atc.gcs,atc.cr) for atc in lcs_sort_list]
-    header = ["Title","DOI","LCS","LCR","GCS","CR"]
-    print(tabulate(lcs_show_table,headers=header))
+from fastapi import FastAPI,HTTPException
 
-@app.command()
-def lcr(filename:str,page:int=typer.Option(0,help="Display articles of next pages")):
-    local_article_list = core(filename)
-    lcr_sort_list = sorted(local_article_list,key=lambda atc:atc.lcr,reverse=True)
-    lcr_show_list = lcr_sort_list[page*20:(page+1)*20]
-    lcr_show_table = [(atc.title, atc.doi, atc.lcs,atc.lcr,atc.gcs,atc.cr) for atc in lcr_sort_list]
-    header = ["Title","DOI","LCS","LCR","GCS","CR"]
-    print(tabulate(lcr_show_table,headers=header))
+app = FastAPI()
 
-@app.command()
-def search(filename:str, doi:str):
-    local_article_list=core(filename)
-    searched_article = next((atc for atc in local_article_list if atc.doi == doi))
-    searched_article_table = [[searched_article.title,searched_article.doi,searched_article.lcs,searched_article.lcr,searched_article.gcs,searched_article.cr,searched_article.lcs_list]]
-    header = ["Title","DOI","LCS","LCR","GCS","CR","LCS_LIST"]
-    print(tabulate(searched_article_table,headers=header))
+@app.get("/")
+def all_articles():
+    return [{"Title":atc.title,"DOI":atc.doi,"LCS":atc.lcs,"GCS":atc.gcs,"LCR":atc.lcr,"CR":atc.cr} for atc in article_list]
 
-# @app.command()
-# def show():
-#     local_article_list=core("savedrecs.txt")
-#     for atc in local_article_list:
-#         print(atc.title)
+@app.get("/lcs")
+def LCS_sorted_articles():
+    LCS_sorted_articles = sorted(article_list,key=lambda atc:atc.lcs,reverse=True)
+    return [{"Title":atc.title,"DOI":atc.doi,"LCS":atc.lcs,"GCS":atc.gcs,"LCR":atc.lcr,"CR":atc.cr} for atc in LCS_sorted_articles]
 
+@app.get("/gcs")
+def GCS_sorted_articles():
+    GCS_sorted_articles = sorted(article_list,key=lambda atc:atc.gcs,reverse=True)
+    return [{"Title":atc.title,"DOI":atc.doi,"LCS":atc.lcs,"GCS":atc.gcs,"LCR":atc.lcr,"CR":atc.cr} for atc in GCS_sorted_articles]
 
+@app.get("/lcr")
+def LCR_sorted_articles():
+    LCR_sorted_articles = sorted(article_list,key=lambda atc:atc.lcr,reverse=True)
+    return [{"Title":atc.title,"DOI":atc.doi,"LCS":atc.lcs,"GCS":atc.gcs,"LCR":atc.lcr,"CR":atc.cr} for atc in LCR_sorted_articles]
 
-    
+@app.get("/cr")
+def CR_sorted_articles():
+    CR_sorted_articles = sorted(article_list,key=lambda atc:atc.cr,reverse=True)
+    return [{"Title":atc.title,"DOI":atc.doi,"LCS":atc.lcs,"GCS":atc.gcs,"LCR":atc.lcr,"CR":atc.cr} for atc in CR_sorted_articles]
 
-
-if __name__ == "__main__":
-    app()
+@app.get("/{doi:path}")
+def search_doi(doi:str):
+    searched_atc = {}
+    for atc in article_list:
+        if atc.doi == doi:
+            searched_atc = {"Title":atc.title,"DOI":atc.doi,"LCS":atc.lcs,"GCS":atc.gcs,"LCR":atc.lcr,"CR":atc.cr,"LCS List":atc.lcs_list}
+            break
+    if searched_atc == {}:
+        raise HTTPException(status_code=404,detail="DOI Not Found")
+    else:
+        return searched_atc
 
 
 
