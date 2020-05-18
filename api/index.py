@@ -1,4 +1,5 @@
-from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, HTTPException, File
 import re
 
 
@@ -15,10 +16,9 @@ class Article(object):
         self.year = py
 
 
-def core(filename):
+def core(file):
     local_article_list = []
-    with open("{}".format(filename), "r") as f:
-        chunks = re.split(r'\n(?=PT J)', f.read(), flags=re.MULTILINE)
+    chunks = re.split(r'\n(?=PT J)', file.decode('utf-8'), flags=re.MULTILINE)
 
     for each in chunks[1:]:
         split_lines = each.splitlines()
@@ -71,18 +71,15 @@ def core(filename):
                     article_use.lcr += 1
                     article_source.lcs += 1
                     article_source.lcs_list.append(ref)
-        year_sort_articles = sorted(
-            local_article_list, key=lambda atc: atc.year)
-    return year_sort_articles
+    return local_article_list
 
 
-article_list = core("savedrecs.txt")
+article_list = []
 
 
 app = FastAPI()
 
 # origins = ["http://localhost:8080"]
-# from fastapi.middleware.cors import CORSMiddleware
 # app.add_middleware(
 #     CORSMiddleware,
 #     allow_origins=origins,
@@ -92,8 +89,9 @@ app = FastAPI()
 # )
 
 
-@app.get("/")
-def all_articles():
+@app.post("/")
+def receive_savedrecs(file: bytes = File(...)):
+    article_list = core(file)
     return [{"Title": atc.title, "LCS": atc.lcs, "GCS": atc.gcs, "LCR": atc.lcr, "CR": atc.cr, "PY": atc.year} for atc in article_list]
 
 

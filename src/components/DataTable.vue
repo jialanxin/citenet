@@ -1,6 +1,9 @@
 <template>
   <v-card>
     <v-card-title>
+      <v-file-input label="Upload savedrecs.txt" accept=".txt" show-size v-model="value"></v-file-input>
+      <v-btn @click="upload">Upload</v-btn>
+      <v-spacer />
       <v-text-field
         v-model="search"
         append-icon="mdi-magnify"
@@ -37,13 +40,26 @@ export default {
           CR: 0
         }
       ],
-      search: ""
+      search: "",
+      value: null
     };
   },
-  created: function() {
-    axios.get("https://citenet.lxj230.xyz/api/").then(response => {
-      this.articles = response.data;
-    });
+  methods: {
+    upload: function() {
+      let formData = new FormData();
+      formData.append("file", this.value);
+      formData.append("type", this.value.type);
+      axios
+        .post("https://citenet.lxj230.xyz/api/", formData, {
+          headers: {
+            accept: "application/json",
+            "Content-Type": "multipart/form-data"
+          }
+        })
+        .then(response => {
+          this.articles=response.data;
+        });
+    }
   }
 };
 </script>

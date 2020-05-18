@@ -159,7 +159,18 @@ checkqa-mypy = ["mypy (v0.761)"]
 testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xmlschema"]
 
 [[package]]
-category = "dev"
+category = "main"
+description = "A streaming multipart parser for Python"
+name = "python-multipart"
+optional = false
+python-versions = "*"
+version = "0.0.5"
+
+[package.dependencies]
+six = ">=1.4.0"
+
+[[package]]
+category = "main"
 description = "Python 2 and 3 compatibility utilities"
 name = "six"
 optional = false
@@ -221,7 +232,7 @@ python-versions = ">=3.6.1"
 version = "8.1"
 
 [metadata]
-content-hash = "e238f8dd9bc851965cdd8f317a3652031078e5c366dd0bbcd2c52bece3233420"
+content-hash = "7daa7c4216e855c4802addd0132506161cdcda655b3629b0aa7f50bdb19821af"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -305,6 +316,9 @@ pyparsing = [
 pytest = [
     {file = "pytest-5.4.2-py3-none-any.whl", hash = "sha256:95c710d0a72d91c13fae35dce195633c929c3792f54125919847fdcdf7caa0d3"},
     {file = "pytest-5.4.2.tar.gz", hash = "sha256:eb2b5e935f6a019317e455b6da83dd8650ac9ffd2ee73a7b657a30873d67a698"},
+]
+python-multipart = [
+    {file = "python-multipart-0.0.5.tar.gz", hash = "sha256:f7bb5f611fc600d15fa47b3974c8aa16e93724513b49b5f95c81e6624c83fa43"},
 ]
 six = [
     {file = "six-1.14.0-py2.py3-none-any.whl", hash = "sha256:8f3cd2e254d8f793e7f3d6d9df77b92252b52637291d0f0da013c76ea2724b6c"},
