@@ -50,7 +50,7 @@ export default {
       formData.append("file", this.value);
       formData.append("type", this.value.type);
       axios
-        .post("https://citenet.lxj230.xyz/api/", formData, {
+        .post("https://citenet.now.sh/api/main", formData, {
           headers: {
             accept: "application/json",
             "Content-Type": "multipart/form-data"

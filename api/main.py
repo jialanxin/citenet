@@ -79,10 +79,9 @@ article_list = []
 
 app = FastAPI()
 
-# origins = ["http://localhost:8080"]
 # app.add_middleware(
 #     CORSMiddleware,
-#     allow_origins=origins,
+#     allow_origins=["*"],
 #     allow_credentials=True,
 #     allow_methods=["*"],
 #     allow_headers=["*"],
@@ -95,8 +94,8 @@ def receive_savedrecs(file: bytes = File(...)):
     return [{"Title": atc.title, "LCS": atc.lcs, "GCS": atc.gcs, "LCR": atc.lcr, "CR": atc.cr, "PY": atc.year} for atc in article_list]
 
 
-@app.get("/{doi:path}")
-def search_doi(doi: str):
+@app.get("/doi")
+def search_doi(doi: str = "unknown"):
     searched_atc = {}
     for atc in article_list:
         if atc.doi == doi:
