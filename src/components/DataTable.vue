@@ -41,7 +41,7 @@ export default {
     };
   },
   created: function() {
-    axios.get("http://citenet.lxj230.xyz/api/").then(response => {
+    axios.get("https://citenet.lxj230.xyz/api/").then(response => {
       this.articles = response.data;
     });
   }
