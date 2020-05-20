@@ -9,20 +9,17 @@
     </v-app-bar>
 
     <v-content>
-     <DataTable />
+     <router-view />
     </v-content>
   </v-app>
 </template>
 
 <script>
-import DataTable from "./components/DataTable"
 
 export default {
   name: 'App',
 
-  components: {
-   DataTable
-  },
+
 
   data: () => ({
     //

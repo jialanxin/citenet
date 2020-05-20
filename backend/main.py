@@ -4,7 +4,7 @@ import re
 
 
 class Article(object):
-    def __init__(self, doi, ref_list, tc, ti, py):
+    def __init__(self, doi, ref_list, tc, ti, py, au):
         self.doi = doi
         self.ref_list = ref_list
         self.cr = len(ref_list)
@@ -14,6 +14,7 @@ class Article(object):
         self.lcs_list = []
         self.title = ti
         self.year = py
+        self.author = au
 
 
 def core(file):
@@ -37,6 +38,8 @@ def core(file):
                 DI_line_num = line_num
             if re.match(r'PY ', split_lines[line_num]) != None:
                 PY_line_num = line_num
+            if re.match(r'AU ', split_lines[line_num]) != None:
+                AU_line_num = line_num
 
         TI_lines = split_lines[TI_line_num:SO_line_num]
         TI = ' '.join(TI_lines).replace('    ', ' ')[3:]
@@ -50,6 +53,9 @@ def core(file):
         PY_line = split_lines[PY_line_num]
         PY = PY_line[3:]
 
+        AU_line = split_lines[AU_line_num]
+        AU = AU_line[3:]
+
         CR_lines = split_lines[CR_line_num:NR_line_num]
         ref_list = []
         for line_num in range(len(CR_lines)):
@@ -62,7 +68,7 @@ def core(file):
                 doi = doi.split(',')[0].lstrip('[')
             ref = {"ref_title": ref_title, "ref_doi": doi}
             ref_list.append(ref)
-        local_article_list.append(Article(DI, ref_list, TC, TI, PY))
+        local_article_list.append(Article(DI, ref_list, TC, TI, PY, AU))
 
     for article_use in local_article_list:
         for article_source in local_article_list:
@@ -74,11 +80,19 @@ def core(file):
     return local_article_list
 
 
-article_list = []
+class PostArticles (object):
+    def __init__ (self):
+        self.article_list = []
+    def set(self,article_list):
+        self.article_list = article_list
+    def get(self):
+        return self.article_list
+
+postcache = PostArticles()
 
 
 app = FastAPI()
-origins = ["http://localhost:5000","https://citenet.lxj230.xyz"]
+origins = ["http://localhost:8080", "https://citenet.lxj230.xyz"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -91,16 +105,17 @@ app.add_middleware(
 @app.post("/")
 def receive_savedrecs(file: bytes = File(...)):
     article_list = core(file)
-    return [{"Title": atc.title, "LCS": atc.lcs, "GCS": atc.gcs, "LCR": atc.lcr, "CR": atc.cr, "PY": atc.year} for atc in article_list]
+    postcache.set(article_list)
+    return [{"Title": atc.title, "LCS": atc.lcs, "GCS": atc.gcs, "LCR": atc.lcr, "CR": atc.cr, "PY": atc.year, "AU": atc.author, "DOI": atc.doi} for atc in article_list]
 
 
-@app.get("/doi")
-def search_doi(doi: str = "unknown"):
+@app.get("/{doi:path}")
+def search_doi(doi: str):
+    article_list = postcache.get()
     searched_atc = {}
     for atc in article_list:
         if atc.doi == doi:
-            searched_atc = {"Title": atc.title, "DOI": atc.doi, "LCS": atc.lcs,
-                            "GCS": atc.gcs, "LCR": atc.lcr, "CR": atc.cr, "LCS List": atc.lcs_list}
+            searched_atc = {"Title": atc.title, "DOI": atc.doi, "Author":atc.author}
             break
     if searched_atc == {}:
         raise HTTPException(status_code=404, detail="DOI Not Found")
