@@ -1,0 +1,25 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master, preview ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: |
+        cd backend
+        docker build . --file Dockerfile --tag citenet
+    - name: publish docker
+      run: |
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        docker tag citenet ${{ secrets.DOCKER_USERNAME }}/citenet
+        docker push ${{ secrets.DOCKER_USERNAME }}/citenet
