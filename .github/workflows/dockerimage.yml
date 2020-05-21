@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  build:
+  build-backend:
 
     runs-on: ubuntu-latest
 
@@ -23,3 +23,17 @@ jobs:
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
         docker tag citenet ${{ secrets.DOCKER_USERNAME }}/citenet
         docker push ${{ secrets.DOCKER_USERNAME }}/citenet
+  
+  build-frontend: 
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build Vue App
+      run: |
+        yarn install
+        yarn build
+    - uses: actions/upload-artifact@v1.0.0
+      with: 
+        name: dist
+        path: dist/ 
+

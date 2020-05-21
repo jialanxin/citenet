@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
+  <div>
     <v-simple-table>
       <template>
         <tbody>
@@ -12,8 +12,18 @@
             <td>{{article.Author}}</td>
           </tr>
           <tr>
+            <td>Year</td>
+            <td>{{article.Year}}</td>
+          </tr>
+          <tr>
+            <td>Journal</td>
+            <td>{{article.Journal}}</td>
+          </tr>
+          <tr>
             <td>DOI</td>
-            <td>{{article.DOI}}</td>
+            <td>
+              <a :href="this.doiUrl">{{article.DOI}}</a>
+            </td>
           </tr>
         </tbody>
       </template>
@@ -30,14 +40,23 @@ export default {
       article: {
         Title: "Title1",
         Author: "Who1",
-        DOI: "10.0000/abcdef"
+        DOI: "10.0000/abcdef",
+        Year: 1900,
+        Journal: "Nature"
       }
     };
   },
   created: function() {
-    axios.get(process.env.VUE_APP_BACKEND_ADDRESS + this.$route.path).then(response => {
-      this.article = response.data;
-    });
+    axios
+      .get(process.env.VUE_APP_BACKEND_ADDRESS + this.$route.path)
+      .then(response => {
+        this.article = response.data;
+      });
+  },
+  computed: {
+    doiUrl: function() {
+      return `https://doi.org/${this.article.DOI}`;
+    }
   }
 };
 </script>

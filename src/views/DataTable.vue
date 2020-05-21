@@ -3,6 +3,7 @@
     <v-card-title>
       <v-file-input label="Upload savedrecs.txt" accept=".txt" show-size v-model="value"></v-file-input>
       <v-btn @click="upload">Upload</v-btn>
+      <v-btn @click="clickGraph">Graph</v-btn>
       <v-spacer />
       <v-text-field
         v-model="search"
@@ -75,9 +76,14 @@ export default {
         });
     },
     clickline: function(payload) {
-      let path = "/" + encodeURIComponent(payload.DOI);
-      let detailPage = this.$router.resolve({ path: path });
+      const path = "/doi/" + encodeURIComponent(payload.DOI);
+      const detailPage = this.$router.resolve({ path: path });
       window.open(detailPage.href, "_blank");
+    },
+    clickGraph: function() {
+      const path = "/graph";
+      const graphPage = this.$router.resolve({ path: path });
+      window.open(graphPage.href, "_blank");
     }
   }
 };
