@@ -1,9 +1,18 @@
 <template>
   <v-card>
     <v-card-title>
-      <v-file-input label="Upload savedrecs.txt" accept=".txt" show-size v-model="value"></v-file-input>
-      <v-btn @click="upload">Upload</v-btn>
-      <v-btn @click="clickGraph">Graph</v-btn>
+      <v-file-input
+        label="Upload savedrecs.txt"
+        accept=".txt"
+        show-size
+        v-model="value"
+      />
+      <v-btn @click="upload">
+        Upload
+      </v-btn>
+      <v-btn @click="clickGraph">
+        Graph
+      </v-btn>
       <v-spacer />
       <v-text-field
         v-model="search"
@@ -11,14 +20,19 @@
         label="Search"
         single-line
         hide-details
-      ></v-text-field>
+      />
     </v-card-title>
-    <v-data-table :headers="headers" :items="articles" :search="search" @click:row="clickline"></v-data-table>
+    <v-data-table
+      :headers="headers"
+      :items="articles"
+      :search="search"
+      @click:row="clickline"
+    />
   </v-card>
 </template>
 
 <script>
-import axios from "axios";
+import Dexie from "dexie";
 export default {
   name: "DataTable",
   data: () => {
@@ -59,30 +73,161 @@ export default {
     };
   },
   methods: {
-    upload: function() {
-      let formData = new FormData();
-      formData.append("file", this.value);
-      formData.append("type", this.value.type);
-      axios
-        .post(process.env.VUE_APP_BACKEND_ADDRESS, formData, {
-          headers: {
-            accept: "application/json",
-            "Content-Type": "multipart/form-data",
-            "Access-Control-Allow-Origin": "*"
+    readText: function(file) {
+      return new Promise(function(resolve, reject) {
+        let reader = new FileReader();
+        reader.onload = function() {
+          resolve(reader.result);
+        };
+        reader.onerror = function() {
+          reject(reader.error);
+        };
+        reader.readAsText(file, "UTF-8");
+      });
+    },
+    parseText: function(txt) {
+      let localArticleList = new Array();
+      const splitChunkMark = new RegExp("\n(?=PT J)", "m");
+      const chunks = txt.split(splitChunkMark).slice(1);
+      for (let each of chunks) {
+        let splitLines = each.split(new RegExp("\n"));
+        let TILineNum = undefined;
+        let SOLineNum = undefined;
+        let TCLineNum = undefined;
+        let DILineNum = undefined;
+        let PYLineNum = undefined;
+        let AULineNum = undefined;
+        let CRLineNum = undefined;
+        let NRLineNum = undefined;
+        for (let lineNum = 0; lineNum < splitLines.length; lineNum++) {
+          const line = splitLines[lineNum];
+          if (line.startsWith("TI ")) {
+            TILineNum = lineNum;
+          } else if (line.startsWith("SO ")) {
+            SOLineNum = lineNum;
+          } else if (line.startsWith("TC ")) {
+            TCLineNum = lineNum;
+          } else if (line.startsWith("DI ")) {
+            DILineNum = lineNum;
+          } else if (line.startsWith("PY ")) {
+            PYLineNum = lineNum;
+          } else if (line.startsWith("AU ")) {
+            AULineNum = lineNum;
+          } else if (line.startsWith("CR ")) {
+            CRLineNum = lineNum;
+          } else if (line.startsWith("NR ")) {
+            NRLineNum = lineNum;
           }
-        })
-        .then(response => {
-          this.articles = response.data;
+        }
+        if (
+          TILineNum != undefined &&
+          SOLineNum != undefined &&
+          TCLineNum != undefined &&
+          DILineNum != undefined &&
+          PYLineNum != undefined &&
+          AULineNum != undefined &&
+          CRLineNum != undefined &&
+          NRLineNum != undefined
+        ) {
+          const TILines = splitLines.slice(TILineNum, SOLineNum);
+          const TI = TILines.join(" ")
+            .replace(new RegExp(" {4}", "g"), " ")
+            .slice(3);
+
+          const SOLine = splitLines[SOLineNum];
+          const SO = SOLine.slice(3);
+
+          const TCLine = splitLines[TCLineNum];
+          const TC = parseInt(TCLine.slice(3));
+
+          const DILine = splitLines[DILineNum];
+          const DI = DILine.slice(3);
+
+          const PYLine = splitLines[PYLineNum];
+          const PY = parseInt(PYLine.slice(3));
+
+          const AULine = splitLines[AULineNum];
+          const AU = AULine.slice(3);
+
+          const CRLines = splitLines.slice(CRLineNum, NRLineNum);
+          let citeList = new Array();
+          for (let citeline of CRLines) {
+            citeline = citeline.slice(3);
+            let [citeTitle, citeDOI] = citeline.split(new RegExp(", DOI "));
+            if (citeTitle != undefined && citeDOI != undefined) {
+              if (citeDOI.startsWith("[")) {
+                citeDOI = citeDOI.split(",")[0].slice(1);
+              }
+              citeList.push({ citeTitle, citeDOI });
+            }
+          }
+
+          localArticleList.push({
+            Title: TI,
+            Journal: SO,
+            GCS: TC,
+            DOI: DI,
+            Year: PY,
+            Author: AU,
+            citeList,
+            LCR: 0,
+            LCS: 0,
+            localCiteList: [],
+            CR: citeList.length
+          });
+        }
+      }
+      return localArticleList;
+    },
+    findLocalCite: function(txt) {
+      const localArticleList = this.parseText(txt);
+      for (let articleUse of localArticleList) {
+        for (let cite of articleUse.citeList) {
+          for (let articleSource of localArticleList) {
+            if (cite.citeDOI == articleSource.DOI) {
+              articleUse.LCR += 1;
+              articleUse.localCiteList.push(cite);
+              articleSource.LCS += 1;
+            }
+          }
+        }
+      }
+      return localArticleList;
+    },
+    upload: async function() {
+      const txt = await this.readText(this.value);
+      const localArticleList = this.findLocalCite(txt);
+      this.articles = new Array();
+
+      await Dexie.delete("article_database");
+      let db = new Dexie("article_database");
+      db.version(1).stores({
+        articles:
+          "Title,Journal,GCS,DOI,Year,Author,citeList,LCR,LCS,localCiteList,CR"
+      });
+      for (let article of localArticleList) {
+        await db.articles.put(article);
+        this.articles.push({
+          Title: article.Title,
+          PY: article.Year,
+          LCS: article.LCS,
+          GCS: article.GCS,
+          LCR: article.LCR,
+          CR: article.CR,
+          AU: article.Author,
+          DOI: article.DOI
         });
+      }
     },
     clickline: function(payload) {
-      const path = "/doi/" + encodeURIComponent(payload.DOI);
-      const detailPage = this.$router.resolve({ path: path });
+      const detailPage = this.$router.resolve({
+        name: "Details",
+        params: { doi: payload.DOI }
+      });
       window.open(detailPage.href, "_blank");
     },
     clickGraph: function() {
-      const path = "/graph";
-      const graphPage = this.$router.resolve({ path: path });
+      const graphPage = this.$router.resolve({ name: "Graph" });
       window.open(graphPage.href, "_blank");
     }
   }

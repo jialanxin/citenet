@@ -1,15 +1,25 @@
 <template>
   <div>
-    <v-card style="z-index:100;position:fixed" height="60" width="200" class="mt-4">
-      <v-text-field outlined label="Nodes Number" v-model="nodeNum" @keydown.enter="changeNodeNum"></v-text-field>
+    <v-card
+      style="z-index:100;position:fixed"
+      height="60"
+      width="200"
+      class="mt-4"
+    >
+      <v-text-field
+        outlined
+        label="Nodes Number"
+        v-model="nodeNum"
+        @keydown.enter="changeNodeNum"
+      />
     </v-card>
-    <div id="mountNode"></div>
+    <div id="mountNode" />
   </div>
 </template>
 
 <script>
 import G6 from "@antv/g6";
-import axios from "axios";
+import Dexie from "dexie";
 export default {
   name: "Graph",
   mounted: async function() {
@@ -18,11 +28,39 @@ export default {
     } else {
       this.nodeNum = this.$route.query.nodes;
     }
-    const response = await axios.get(
-      process.env.VUE_APP_BACKEND_ADDRESS + `/graph?nodes=${this.nodeNum}`
-    );
-    this.node_list = response.data.node_list;
-    this.edge_list = response.data.edge_list;
+    const db = new Dexie("article_database");
+    db.version(1).stores({
+      articles:
+        "Title,Journal,GCS,DOI,Year,Author,citeList,LCR,LCS,localCiteList,CR"
+    });
+    this.articles = await db.articles.toArray();
+    this.articles.sort((a, b) => {
+      if (a.LCR + a.LCS > b.LCR + b.LCS) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+
+    const shownArticles = this.articles.slice(0, this.nodeNum);
+    let node_list = new Array();
+    let edge_list = new Array();
+
+    for (let articleUse of shownArticles) {
+      node_list.push({ id: articleUse.DOI, label: articleUse.Author });
+      for (let localCite of articleUse.localCiteList) {
+        for (let articleSource of shownArticles) {
+          if (localCite.citeDOI == articleSource.DOI) {
+            edge_list.push({
+              source: articleUse.DOI,
+              target: articleSource.DOI
+            });
+          }
+        }
+      }
+    }
+    this.node_list = node_list;
+    this.edge_list = edge_list;
 
     this.graph = new G6.Graph({
       container: "mountNode",
@@ -65,19 +103,35 @@ export default {
       });
       const nodeItem = e.item;
       this.graph.setItemState(nodeItem, "click", true);
-      const path = "/doi/" + encodeURIComponent(nodeItem.defaultCfg.id);
-      const detailPage = this.$router.resolve({ path: path });
+      const detailPage = this.$router.resolve({
+        name: "Details",
+        params: { doi: nodeItem._cfg.id }
+      });
       window.open(detailPage.href, "_blank");
     });
   },
   methods: {
     changeNodeNum: async function() {
-      this.$router.replace({ path: `/graph?nodes=${this.nodeNum}` });
-      const response = await axios.get(
-        process.env.VUE_APP_BACKEND_ADDRESS + `/graph?nodes=${this.nodeNum}`
-      );
-      this.node_list = response.data.node_list;
-      this.edge_list = response.data.edge_list;
+      this.$router.replace({ name: "Graph", query: { nodes: this.nodeNum } });
+      const shownArticles = this.articles.slice(0, this.nodeNum);
+      let node_list = new Array();
+      let edge_list = new Array();
+
+      for (let articleUse of shownArticles) {
+        node_list.push({ id: articleUse.DOI, label: articleUse.Author });
+        for (let localCite of articleUse.localCiteList) {
+          for (let articleSource of shownArticles) {
+            if (localCite.citeDOI == articleSource.DOI) {
+              edge_list.push({
+                source: articleUse.DOI,
+                target: articleSource.DOI
+              });
+            }
+          }
+        }
+      }
+      this.node_list = node_list;
+      this.edge_list = edge_list;
       this.graph.data({ nodes: this.node_list, edges: this.edge_list });
       this.graph.render();
     }
@@ -85,6 +139,7 @@ export default {
   data: () => {
     return {
       nodeNum: 10,
+      articles: [],
       graph: null,
       node_list: [
         {

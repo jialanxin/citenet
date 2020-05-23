@@ -14,7 +14,7 @@
   resolved "https://registry.npm.taobao.org/@antv/event-emitter/download/@antv/event-emitter-0.1.2.tgz#a17b7cb86e6d071880dc6bfb232756f88624ecbc"
   integrity sha1-oXt8uG5tBxiA3Gv7IydW+IYk7Lw=
 
-"@antv/g-base@^0.4.0", "@antv/g-base@^0.4.7":
+"@antv/g-base@^0.4.1", "@antv/g-base@^0.4.7":
   version "0.4.7"
   resolved "https://registry.npm.taobao.org/@antv/g-base/download/@antv/g-base-0.4.7.tgz#7698fc4c8cb381f2b789a30fbeb26b1e88c48196"
   integrity sha1-dpj8TIyzgfK3iaMPvrJrHojEgZY=
@@ -30,7 +30,7 @@
     d3-timer "^1.0.9"
     detect-browser "^5.1.0"
 
-"@antv/g-canvas@^0.4.2":
+"@antv/g-canvas@^0.4.3":
   version "0.4.12"
   resolved "https://registry.npm.taobao.org/@antv/g-canvas/download/@antv/g-canvas-0.4.12.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40antv%2Fg-canvas%2Fdownload%2F%40antv%2Fg-canvas-0.4.12.tgz#fa33e0db29d8f875729066609ae1066531700605"
   integrity sha1-+jPg2ynY+HVykGZgmuEGZTFwBgU=
@@ -49,7 +49,7 @@
     "@antv/util" "~2.0.0"
     gl-matrix "^3.0.0"
 
-"@antv/g-svg@^0.4.0":
+"@antv/g-svg@^0.4.1":
   version "0.4.7"
   resolved "https://registry.npm.taobao.org/@antv/g-svg/download/@antv/g-svg-0.4.7.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40antv%2Fg-svg%2Fdownload%2F%40antv%2Fg-svg-0.4.7.tgz#0d65e1db34e6dfe609aadb3eddf4748db02f0b01"
   integrity sha1-DWXh2zTm3+YJqts+3fR0jbAvCwE=
@@ -59,18 +59,18 @@
     "@antv/util" "~2.0.0"
     detect-browser "^4.6.0"
 
-"@antv/g6@^3.4.10":
-  version "3.4.10"
-  resolved "https://registry.npm.taobao.org/@antv/g6/download/@antv/g6-3.4.10.tgz#ac9d0911310bef4afcee82ddfe95bb25f8e9cd91"
-  integrity sha1-rJ0JETEL70r87oLd/pW7JfjpzZE=
+"@antv/g6@^3.5.0":
+  version "3.5.0"
+  resolved "https://registry.npm.taobao.org/@antv/g6/download/@antv/g6-3.5.0.tgz#4aaa042fa14422e59cb4c0b437196d173b5508b4"
+  integrity sha1-SqoEL6FEIuWctMC0NxltFztVCLQ=
   dependencies:
     "@antv/dom-util" "^2.0.1"
     "@antv/event-emitter" "~0.1.0"
-    "@antv/g-base" "^0.4.0"
-    "@antv/g-canvas" "^0.4.2"
+    "@antv/g-base" "^0.4.1"
+    "@antv/g-canvas" "^0.4.3"
     "@antv/g-math" "^0.1.1"
-    "@antv/g-svg" "^0.4.0"
-    "@antv/hierarchy" "^0.6.1"
+    "@antv/g-svg" "^0.4.1"
+    "@antv/hierarchy" "^0.6.2"
     "@antv/matrix-util" "^2.0.4"
     "@antv/path-util" "^2.0.3"
     "@antv/scale" "^0.3.1"
@@ -85,7 +85,7 @@
   resolved "https://registry.npm.taobao.org/@antv/gl-matrix/download/@antv/gl-matrix-2.7.1.tgz#acb8e37f7ab3df01345aba4372d7942be42eba14"
   integrity sha1-rLjjf3qz3wE0WrpDcteUK+QuuhQ=
 
-"@antv/hierarchy@^0.6.1":
+"@antv/hierarchy@^0.6.2":
   version "0.6.3"
   resolved "https://registry.npm.taobao.org/@antv/hierarchy/download/@antv/hierarchy-0.6.3.tgz#5fa5da89e33431c6e769ee20d7a391cc81c4fe95"
   integrity sha1-X6XaieM0Mcbnae4g16ORzIHE/pU=
@@ -1166,6 +1166,11 @@
   resolved "https://registry.yarnpkg.com/@vue/cli-plugin-vuex/-/cli-plugin-vuex-4.3.1.tgz#2b73aff56f9e1be31018873d5ed2d59f155e7476"
   integrity sha512-mukwOlhZGBJhkqO2b3wHFFHjK5aP00b1WUHdrOfLR7M18euhaTyb4kA5nwZwEOmU3EzZx6kHzSFCRy/XaMkLug==
 
+"@vue/cli-plugin-vuex@~4.4.0":
+  version "4.4.0"
+  resolved "https://registry.npm.taobao.org/@vue/cli-plugin-vuex/download/@vue/cli-plugin-vuex-4.4.0.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40vue%2Fcli-plugin-vuex%2Fdownload%2F%40vue%2Fcli-plugin-vuex-4.4.0.tgz#a8ba1b136fc5fadde9a9886b2fb1a1ff4946d75b"
+  integrity sha1-qLobE2/F+t3pqYhrL7Gh/0lG11s=
+
 "@vue/cli-service@~4.3.0":
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/@vue/cli-service/-/cli-service-4.3.1.tgz#94b2121d08e343a55f7ecef260af5257a9ffe7e5"
@@ -1715,13 +1720,6 @@ aws4@^1.8.0:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.9.1.tgz#7e33d8f7d449b3f673cd72deb9abdc552dbe528e"
   integrity sha512-wMHVg2EOHaMRxbzgFJ9gtjOOCrI80OHLG14rxi28XwOW8ux6IiEbRCGGGqCtdAIg4FQCbW20k9RsT4y3gJlFug==
-
-axios@^0.19.2:
-  version "0.19.2"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
-  integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
-  dependencies:
-    follow-redirects "1.5.10"
 
 babel-eslint@^10.1.0:
   version "10.1.0"
@@ -2910,13 +2908,6 @@ debug@2.6.9, debug@^2.2.0, debug@^2.3.3:
   dependencies:
     ms "2.0.0"
 
-debug@=3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
-  integrity sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==
-  dependencies:
-    ms "2.0.0"
-
 debug@^3.0.0, debug@^3.1.1, debug@^3.2.5:
   version "3.2.6"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.6.tgz#e83d17de16d8a7efb7717edbe5fb10135eee629b"
@@ -3064,6 +3055,11 @@ detect-node@^2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/detect-node/-/detect-node-2.0.4.tgz#014ee8f8f669c5c58023da64b8179c083a28c46c"
   integrity sha512-ZIzRpLJrOj7jjP2miAtgqIfmzbxa4ZOr5jJc601zklsfEx9oTzmmj2nVpIPRpNlRTIh8lc1kyViIY7BWSGNmKw==
+
+dexie@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.npm.taobao.org/dexie/download/dexie-3.0.1.tgz#faafeb94be0d5e18b25d700546a2c05725511cfc"
+  integrity sha1-+q/rlL4NXhiyXXAFRqLAVyVRHPw=
 
 diffie-hellman@^5.0.0:
   version "5.0.3"
@@ -3846,13 +3842,6 @@ flush-write-stream@^1.0.0:
   dependencies:
     inherits "^2.0.3"
     readable-stream "^2.3.6"
-
-follow-redirects@1.5.10:
-  version "1.5.10"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.5.10.tgz#7b7a9f9aea2fdff36786a94ff643ed07f4ff5e2a"
-  integrity sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==
-  dependencies:
-    debug "=3.1.0"
 
 follow-redirects@^1.0.0:
   version "1.11.0"
@@ -8249,6 +8238,11 @@ vuetify@^2.2.11:
   version "2.2.29"
   resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.2.29.tgz#77fd26d8d143251445bed69d3fa0e5d418f25fd0"
   integrity sha512-UI1i8kEdV+s7tNQe2yJJMPlvxGTE8cZfUAXEGV2yO4owHmeybn6p5YzFpJqimoKkfX6ok+zV29+6yIKfkyUDAA==
+
+vuex@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.npm.taobao.org/vuex/download/vuex-3.4.0.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fvuex%2Fdownload%2Fvuex-3.4.0.tgz#20cc086062d750769fce1febb34e7fceeaebde45"
+  integrity sha1-IMwIYGLXUHafzh/rs05/zurr3kU=
 
 watchpack-chokidar2@^2.0.0:
   version "2.0.0"
