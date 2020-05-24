@@ -32,42 +32,41 @@
 </template>
 
 <script>
-import Dexie from "dexie";
+import Dexie from 'dexie';
+
 export default {
-  name: "Details",
-  data: () => {
-    return {
-      article: {
-        Title: "Title1",
-        Author: "Who1",
-        DOI: "10.0000/abcdef",
-        Year: 1900,
-        Journal: "Nature"
-      }
-    };
-  },
-  created: async function() {
+  name: 'Details',
+  data: () => ({
+    article: {
+      Title: 'Title1',
+      Author: 'Who1',
+      DOI: '10.0000/abcdef',
+      Year: 1900,
+      Journal: 'Nature',
+    },
+  }),
+  async created() {
     const DOI = this.$route.params.doi;
 
-    const db = new Dexie("article_database");
+    const db = new Dexie('article_database');
     db.version(1).stores({
       articles:
-        "Title,Journal,GCS,DOI,Year,Author,citeList,LCR,LCS,localCiteList,CR"
+        'Title,Journal,GCS,DOI,Year,Author,citeList,LCR,LCS,localCiteList,CR',
     });
 
-    const article = await db.articles.get({ DOI: DOI });
+    const article = await db.articles.get({ DOI });
     this.article = {
       Title: article.Title,
       Author: article.Author,
       DOI: article.DOI,
       Year: article.Year,
-      Journal: article.Journal
+      Journal: article.Journal,
     };
   },
   computed: {
-    doiUrl: function() {
+    doiUrl() {
       return `https://doi.org/${this.article.DOI}`;
-    }
-  }
+    },
+  },
 };
 </script>
