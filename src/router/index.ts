@@ -1,13 +1,13 @@
 import Vue from 'vue';
-import VueRouter from 'vue-router';
+import VueRouter, { RouteConfig } from 'vue-router';
 import DataTable from '../views/DataTable.vue';
 
 Vue.use(VueRouter);
 
-const routes = [
+const routes: Array<RouteConfig> = [
   {
     path: '/',
-    name: 'Articles',
+    name: 'Home',
     component: DataTable,
   },
   {
@@ -18,11 +18,7 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/Details.vue'),
   },
-  {
-    path: '/graph',
-    name: 'Graph',
-    component: () => import('../views/Graph.vue'),
-  },
+  { path: '/Graph', name: 'Graph', component: () => import('../views/Graph.vue') },
 ];
 
 const router = new VueRouter({

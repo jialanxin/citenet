@@ -5,7 +5,14 @@
       color="primary"
       dark
     >
-      <span>CiteNet</span>
+      <div class="d-flex align-center">
+        <span>CiteNet</span>
+
+      </div>
+
+      <v-spacer></v-spacer>
+
+
     </v-app-bar>
 
     <v-content>
@@ -14,14 +21,15 @@
   </v-app>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 
-export default {
+export default Vue.extend({
   name: 'App',
 
 
   data: () => ({
     //
   }),
-};
+});
 </script>
