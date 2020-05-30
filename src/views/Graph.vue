@@ -21,7 +21,9 @@
 import { Component, Vue } from 'vue-property-decorator';
 import Dexie from 'dexie';
 import { Graph } from '@antv/g6/lib';
-import { NodeConfig, EdgeConfig } from '@antv/g6/lib/types';
+import {
+  NodeConfig, EdgeConfig, IG6GraphEvent, Item,
+} from '@antv/g6/lib/types';
 import { Article, isNotNull } from './DataTable.vue';
 
 interface Node {
@@ -116,15 +118,14 @@ export default class GraphPage extends Vue {
     });
     this.graph.data({ nodes: this.nodeList, edges: this.edgeList });
     this.graph.render();
-    this.graph.on('node:click', (e: any) => {
+    this.graph.on('node:click', (e: IG6GraphEvent) => {
       const clickNodes = this.graph.findAllByState('node', 'click');
       clickNodes.forEach((cn) => {
         this.graph.setItemState(cn, 'click', false);
       });
-      const nodeItem = e.item;
+      const nodeItem = e.item as Item;
       this.graph.setItemState(nodeItem, 'click', true);
-      const clicked = this.graph.findAllByState('node', 'click')[0];
-      const doi: string = clicked.getID();
+      const doi: string = nodeItem.getID();
       const detailPage = this.$router.resolve({
         name: 'Details',
         params: { doi },

@@ -3,9 +3,6 @@
     <v-card-title>
       <v-file-input label="Upload savedrecs.txt" accept=".txt" show-size v-model="value" />
       <v-btn @click="upload" color="secondary">Upload</v-btn>
-      <v-btn @click="clickGraph" color="secondary">
-        Graph
-      </v-btn>
       <v-spacer />
       <v-text-field
         v-model="search"
@@ -259,11 +256,6 @@ export default class DataTable extends Vue {
       params: { doi: payload.DOI },
     });
     window.open(detailPage.href, '_blank');
-  }
-
-  private clickGraph(): void{
-    const graphPage = this.$router.resolve({ name: 'Graph' });
-    window.open(graphPage.href, '_blank');
   }
 }
 

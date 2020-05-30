@@ -11,7 +11,10 @@
       </div>
 
       <v-spacer></v-spacer>
-
+        <v-btn @click=clickGraph  text>
+          <v-icon>mdi-graph</v-icon>
+          Graph
+        </v-btn>
 
     </v-app-bar>
 
@@ -31,5 +34,11 @@ export default Vue.extend({
   data: () => ({
     //
   }),
+  methods: {
+    clickGraph() {
+      const graphPage = this.$router.resolve({ name: 'Graph' });
+      window.open(graphPage.href, '_blank');
+    },
+  },
 });
 </script>
