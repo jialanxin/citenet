@@ -8,7 +8,11 @@
         </tr>
         <tr>
           <td>Author</td>
-          <td>{{ article.Author }}</td>
+          <td>{{ article.AuthorsList[0] }}</td>
+        </tr>
+        <tr>
+          <td>Corrosponding Author</td>
+          <td>{{ corrospondingAuthor }}</td>
         </tr>
         <tr>
           <td>Year</td>
@@ -24,6 +28,12 @@
             <a :href="this.doiUrl">{{ article.DOI }}</a>
           </td>
         </tr>
+        <tr>
+          <td>Abstract</td>
+          <td>
+            {{article.Abstract}}
+          </td>
+        </tr>
       </tbody>
     </template>
   </v-simple-table>
@@ -32,7 +42,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import Dexie from 'dexie';
-import { Article } from './DataTable.vue';
+import last from 'lodash/last';
+import { Article } from '../logic/textToArticles';
 
 @Component
 export default class Details extends Vue {
@@ -48,6 +59,8 @@ export default class Details extends Vue {
     CR: 200,
     citeList: [],
     localCiteList: [],
+    Abstract: 'Abstract1',
+    AuthorsList: [],
   };
 
   private get doiUrl(): string {
@@ -59,11 +72,19 @@ export default class Details extends Vue {
     const db = new Dexie('article_database');
     db.version(1).stores({
       articles:
-        'Title,Journal,GCS,DOI,Year,Author,citeList,LCR,LCS,localCiteList,CR',
+        'Title,Journal,GCS,DOI,Year,Author,citeList,LCR,LCS,localCiteList,CR,Abstract,AuthorsList',
     });
     const articles = db.table('articles');
     const article = await articles.get({ DOI });
     this.article = article;
+  }
+
+  private get corrospondingAuthor(): string {
+    const corrospondingAuthor = last(this.article.AuthorsList);
+    if (typeof corrospondingAuthor === 'undefined') {
+      return 'Corrosponding Author Not Found';
+    }
+    return corrospondingAuthor;
   }
 }
 </script>

@@ -24,17 +24,8 @@ import { Graph } from '@antv/g6/lib';
 import {
   NodeConfig, EdgeConfig, IG6GraphEvent, Item,
 } from '@antv/g6/lib/types';
-import { Article, isNotNull } from './DataTable.vue';
+import { Article, isNotNull } from '../logic/textToArticles';
 
-interface Node {
-  id: string;
-  label: string;
-}
-
-interface Edge {
-  source: string;
-  target: string;
-}
 
 @Component
 export default class GraphPage extends Vue {
