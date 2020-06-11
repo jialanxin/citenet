@@ -26,7 +26,6 @@ import {
 } from '@antv/g6/lib/types';
 import { Article, isNotNull } from '../logic/textToArticles';
 
-
 @Component
 export default class GraphPage extends Vue {
   private async processShownArticles(nodeNum: number): Promise<void> {
@@ -131,7 +130,6 @@ export default class GraphPage extends Vue {
     this.graph.data({ nodes: this.nodeList, edges: this.edgeList });
     this.graph.render();
   }
-
 
   nodeNum = 10;
 

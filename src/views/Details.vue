@@ -23,6 +23,14 @@
           <td>{{ article.Journal }}</td>
         </tr>
         <tr>
+          <td>LCS</td>
+          <td>{{ article.LCS }}</td>
+        </tr>
+        <tr>
+          <td>LCR</td>
+          <td>{{ article.LCR }}</td>
+        </tr>
+        <tr>
           <td>DOI</td>
           <td>
             <a :href="this.doiUrl">{{ article.DOI }}</a>

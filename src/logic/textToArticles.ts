@@ -25,8 +25,8 @@ interface Article {
 
 function parseText(txt: string): Article[] {
   // eslint-disable-next-line no-control-regex
-  const splitChunkMark = new RegExp('\n(?=PT J)', 'm');
-  const chunks = txt.split(splitChunkMark).slice(1);
+  const splitChunkMark = new RegExp('\n(?=ER)', 'm');
+  const chunks = txt.split(splitChunkMark);
   const localArticleList: Article[] = chunks
     .map((each) => {
       // eslint-disable-next-line no-control-regex

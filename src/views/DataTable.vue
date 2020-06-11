@@ -27,7 +27,6 @@ import {
   Article, parseText, findLocalCite,
 } from '../logic/textToArticles';
 
-
 function readText(file: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -42,7 +41,6 @@ function readText(file: Blob): Promise<string> {
     reader.readAsText(file, 'UTF-8');
   });
 }
-
 
 @Component
 export default class DataTable extends Vue {

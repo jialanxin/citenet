@@ -19,6 +19,10 @@
           <v-icon>mdi-help-circle-outline</v-icon>
           Usage
         </v-btn>
+        <v-btn href="https://github.com/jialanxin/citenet/issues" target="_blank" text>
+          <v-icon>mdi-bug</v-icon>
+          Report Bugs
+        </v-btn>
 
     </v-app-bar>
 
@@ -33,7 +37,6 @@ import Vue from 'vue';
 
 export default Vue.extend({
   name: 'App',
-
 
   data: () => ({
     //

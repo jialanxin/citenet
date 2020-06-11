@@ -4,7 +4,6 @@ import App from './App.vue';
 import router from './router';
 import vuetify from './plugins/vuetify';
 
-
 Vue.use(VueGtag, {
   config: { id: 'UA-154883637-1' },
   appName: 'CiteNet',
