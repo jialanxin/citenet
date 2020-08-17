@@ -42,6 +42,15 @@
             {{article.Abstract}}
           </td>
         </tr>
+        <tr>
+          <td>Local Cites</td>
+          <td>
+            <p v-for="cite in article.localCiteList" :key="cite.citeDOI">
+              <a target="_blank" :href="jumpToCite(cite.citeDOI)">
+              {{cite.citeTitle}}
+              </a></p>
+          </td>
+        </tr>
       </tbody>
     </template>
   </v-simple-table>
@@ -93,6 +102,14 @@ export default class Details extends Vue {
       return 'Corrosponding Author Not Found';
     }
     return corrospondingAuthor;
+  }
+
+  private jumpToCite(citeDoi: string): string {
+    const detailPage = this.$router.resolve({
+      name: 'Details',
+      params: { doi: citeDoi },
+    });
+    return detailPage.href;
   }
 }
 </script>
