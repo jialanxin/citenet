@@ -15,7 +15,7 @@
           <v-icon>mdi-graph</v-icon>
           Graph
         </v-btn>
-        <v-btn href="https://lxj230.xyz/posts/IntroCiteNet" target="_blank" text>
+        <v-btn href="https://e0925574.tk/posts/IntroCiteNet" target="_blank" text>
           <v-icon>mdi-help-circle-outline</v-icon>
           Usage
         </v-btn>
