@@ -24,12 +24,12 @@ interface Article {
 }
 
 function parseText(txt: string): Article[] {
-  // eslint-disable-next-line no-control-regex
+  // eslint-disable-next-line
   const splitChunkMark = new RegExp('\n(?=ER)', 'm');
   const chunks = txt.split(splitChunkMark);
   const localArticleList: Article[] = chunks
     .map((each) => {
-      // eslint-disable-next-line no-control-regex
+      // eslint-disable-next-line
       const splitLines = each.split(new RegExp('\n'));
       let TILineNum: number|undefined;
       let SOLineNum: number|undefined;
@@ -91,6 +91,7 @@ function parseText(txt: string): Article[] {
       ) {
         const TILines = splitLines.slice(TILineNum, SOLineNum);
         const TI = TILines.join(' ')
+        // eslint-disable-next-line
           .replace(new RegExp(' {4}', 'g'), ' ')
           .slice(3);
 
@@ -119,7 +120,9 @@ function parseText(txt: string): Article[] {
 
         const citeList: Cite[] = CRLines.map((citelineWithCap: string): Cite|null => {
           const citeLine = citelineWithCap.slice(3);
+          // eslint-disable-next-line
           const citeTitle = citeLine.split(new RegExp(', DOI '))[0];
+          // eslint-disable-next-line
           let citeDOI = citeLine.split(new RegExp(' DOI '))[1];
           if (citeTitle !== undefined && citeDOI !== undefined) {
             if (citeDOI.startsWith('[')) {
