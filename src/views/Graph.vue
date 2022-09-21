@@ -124,7 +124,7 @@ export default class GraphPage extends Vue {
     });
   }
 
-  private changeNodeNum(): void{
+  private changeNodeNum(): void {
     this.$router.replace({ name: 'Graph', query: { nodes: this.nodeNum.toString(10) } });
     this.processShownArticles(this.nodeNum);
     this.graph.data({ nodes: this.nodeList, edges: this.edgeList });
