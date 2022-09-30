@@ -20,10 +20,9 @@
 <script lang='ts'>
 import { Component, Vue } from 'vue-property-decorator';
 import Dexie from 'dexie';
-import { Graph } from '@antv/g6/lib';
 import {
-  NodeConfig, EdgeConfig, IG6GraphEvent, Item,
-} from '@antv/g6/lib/types';
+  Graph, NodeConfig, EdgeConfig, IG6GraphEvent, Item,
+} from '@antv/g6/lib';
 import { Article, isNotNull } from '../logic/textToArticles';
 
 @Component
