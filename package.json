@@ -10,7 +10,7 @@
   "dependencies": {
     "@antv/g6": "^4.7.4",
     "core-js": "^3.25.2",
-    "dexie": "3.0.4",
+    "dexie": "3.2.2",
     "lodash": "^4.17.19",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
