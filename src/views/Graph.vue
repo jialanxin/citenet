@@ -18,11 +18,13 @@
 </template>
 <script lang="ts" setup>
 import { ref, onMounted, onUpdated } from 'vue';
+import { useRouter } from 'vue-router';
 import Dexie from 'dexie';
 import { isNotNull } from '../utils/textToArticles';
 import { DataSet, Network } from 'vis-network/standalone';
 
 const nodeNum = ref(10);
+const router = useRouter();
 
 function processShownArticles(nodeNum, articles_ordered) {
   const shownArticles = articles_ordered.slice(0, nodeNum);
@@ -82,7 +84,22 @@ onMounted(async () => {
     },
   };
   const network = new Network(container, data, options);
+  network.on('click', function (params) {
+    clickNode(params);
+  });
 });
+function clickNode(params) {
+  const nodes = params.nodes;
+  if (nodes !== []) {
+    const node_DOI = nodes[0];
+    const DOIBase64 = btoa(node_DOI);
+    const detailPage = router.resolve({
+      name: 'Details',
+      params: { doi: DOIBase64 },
+    });
+    window.open(detailPage.href, '_blank');
+  }
+}
 function changeNodeNum() {
   const data = processShownArticles(nodeNum.value, articles_cached.value);
   const container = document.getElementById('mountNode');
@@ -99,6 +116,9 @@ function changeNodeNum() {
     },
   };
   const network = new Network(container, data, options);
+  network.on('click', function (params) {
+    clickNode(params);
+  });
 }
 </script>
 
