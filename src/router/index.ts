@@ -10,9 +10,6 @@ const routes = [
   {
     path: '/doi/:doi',
     name: 'Details',
-    props: (route) => ({
-      id: encodeURIComponent(route.params.id),
-    }),
     component: () => import('../views/Details.vue'),
   },
   {

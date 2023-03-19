@@ -26,7 +26,7 @@ import { DataSet, Network } from 'vis-network/standalone';
 const nodeNum = ref(10);
 const router = useRouter();
 
-function processShownArticles(nodeNum, articles_ordered) {
+function processShownArticles(nodeNum: number, articles_ordered: []) {
   const shownArticles = articles_ordered.slice(0, nodeNum);
   const nodeList = shownArticles.map((articleUse) => ({
     id: articleUse.DOI,
