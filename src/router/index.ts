@@ -8,6 +8,14 @@ const routes = [
     component: () => import('../views/DataTable.vue'),
   },
   {
+    path: '/doi/:doi',
+    name: 'Details',
+    props: (route) => ({
+      id: encodeURIComponent(route.params.id),
+    }),
+    component: () => import('../views/Details.vue'),
+  },
+  {
     path: '/Graph',
     name: 'Graph',
     component: () => import('../views/Graph.vue'),

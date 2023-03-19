@@ -21,14 +21,15 @@
         Report Bugs
       </v-btn>
     </v-app-bar>
-    <v-content>
+    <v-main>
       <router-view />
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
 <script lang="ts" setup>
-import router from './router';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 function clickGraph() {
   const graphPage = router.resolve({ name: 'Graph' });
   window.open(graphPage.href, '_blank');
