@@ -1,7 +1,12 @@
 <template>
   <v-card>
     <v-card-title>
-      <v-file-input label="Upload savedrecs.txt" accept=".txt" show-size v-model="value" />
+      <v-file-input
+        label="Upload savedrecs.txt"
+        accept=".txt"
+        show-size
+        v-model="value"
+      />
       <v-btn @click="upload" color="secondary">Upload</v-btn>
       <v-spacer />
       <v-text-field
@@ -13,19 +18,18 @@
       />
     </v-card-title>
     <v-data-table
-    :headers="headers"
-    :items="articles"
-    :search="search"
-    @click:row="clickline"></v-data-table>
+      :headers="headers"
+      :items="articles"
+      :search="search"
+      @click:row="clickline"
+    ></v-data-table>
   </v-card>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import Dexie from 'dexie/dist/dexie';
-import {
-  Article, parseText, findLocalCite,
-} from '../logic/textToArticles';
+import Dexie from 'dexie';
+import { Article, parseText, findLocalCite } from '../logic/textToArticles';
 
 function readText(file: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -94,7 +98,7 @@ export default class DataTable extends Vue {
     },
   ];
 
-  value: Blob|null = null;
+  value: Blob | null = null;
 
   private async upload(): Promise<void> {
     if (this.value !== null) {
@@ -107,7 +111,7 @@ export default class DataTable extends Vue {
       const db = new Dexie('article_database');
       db.version(1).stores({
         articles:
-        'Title,Journal,GCS,DOI,Year,Author,citeList,LCR,LCS,localCiteList,CR,Abstract,AuthorsList',
+          'Title,Journal,GCS,DOI,Year,Author,citeList,LCR,LCS,localCiteList,CR,Abstract,AuthorsList',
       });
       localArticleList.forEach(async (article) => {
         const articles = db.table('articles');
@@ -124,8 +128,6 @@ export default class DataTable extends Vue {
     window.open(detailPage.href, '_blank');
   }
 }
-
 </script>
 
-<style>
-</style>
+<style></style>

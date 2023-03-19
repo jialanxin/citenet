@@ -3200,10 +3200,10 @@ detect-node@^2.0.4:
   resolved "https://registry.yarnpkg.com/detect-node/-/detect-node-2.1.0.tgz#c9c70775a49c3d03bc2c06d9a73be550f978f8b1"
   integrity sha512-T0NIuQpnTvFDATNuHN5roPwSBG83rFsuO+MXXH9/3N1eFbn4wcPjttvjMLEPWJ0RGUYgQE7cGgS3tNxbqCGM7g==
 
-dexie@3.0.4:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/dexie/-/dexie-3.0.4.tgz#18f5e124d525a413fa836716f2c37fbbc36a6662"
-  integrity sha512-rwS3k8BBstjGFJAS/yjYrsRZucqitnrP3NBhqghl9ihWcWABlT3I5f2dZV9T3pmXGAP7G9p1q00g/axcsuOT8A==
+dexie@^3.2.2:
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/dexie/-/dexie-3.2.3.tgz#f35c91ca797599df8e771b998e9ae9669c877f8c"
+  integrity sha512-iHayBd4UYryDCVUNa3PMsJMEnd8yjyh5p7a+RFeC8i8n476BC9wMhVvqiImq5zJZJf5Tuer+s4SSj+AA3x+ZbQ==
 
 dir-glob@^3.0.1:
   version "3.0.1"
