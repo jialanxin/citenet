@@ -1,28 +1,26 @@
-import Vue from 'vue';
-import VueRouter, { RouteConfig } from 'vue-router';
-import DataTable from '../views/DataTable.vue';
+// Composables
+import { createRouter, createWebHistory } from 'vue-router'
 
-Vue.use(VueRouter);
-
-const routes: Array<RouteConfig> = [
+const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: DataTable,
+    component: () => import('@/layouts/default/Default.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Home',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
+      },
+    ],
   },
-  {
-    path: '/doi/:doi',
-    name: 'Details',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Details.vue'),
-  },
-  { path: '/Graph', name: 'Graph', component: () => import('../views/Graph.vue') },
-];
+]
 
-const router = new VueRouter({
+const router = createRouter({
+  history: createWebHistory(process.env.BASE_URL),
   routes,
-});
+})
 
-export default router;
+export default router

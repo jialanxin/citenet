@@ -1,19 +1,20 @@
-import Vue from 'vue';
-import VueGtag from 'vue-gtag';
-import App from './App.vue';
-import router from './router';
-import vuetify from './plugins/vuetify';
+/**
+ * main.ts
+ *
+ * Bootstraps Vuetify and other plugins then mounts the App`
+ */
 
-Vue.use(VueGtag, {
-  config: { id: 'UA-154883637-1' },
-  appName: 'CiteNet',
-  pageTrackerScreenviewEnabled: true,
-}, router);
+// Components
+import App from './App.vue'
 
-Vue.config.productionTip = false;
+// Composables
+import { createApp } from 'vue'
 
-new Vue({
-  router,
-  vuetify,
-  render: (h) => h(App),
-}).$mount('#app');
+// Plugins
+import { registerPlugins } from '@/plugins'
+
+const app = createApp(App)
+
+registerPlugins(app)
+
+app.mount('#app')
