@@ -17,42 +17,34 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, onUpdated } from 'vue';
+import { ref,Ref, onMounted, onUpdated } from 'vue';
 import { useRouter } from 'vue-router';
 import Dexie from 'dexie';
-import { isNotNull } from '../utils/textToArticles';
+import { Article } from '../utils/textToArticles';
 import { DataSet, Network } from 'vis-network/standalone';
 
 const nodeNum = ref(10);
 const router = useRouter();
 
-function processShownArticles(nodeNum: number, articles_ordered: []) {
+function processShownArticles(nodeNum: number, articles_ordered:Article[]) {
   const shownArticles = articles_ordered.slice(0, nodeNum);
   const nodeList = shownArticles.map((articleUse) => ({
     id: articleUse.DOI,
     label: articleUse.Author,
   }));
-  const edgeList = shownArticles.reduce(
-    (edgeListacc, articleUse) =>
-      edgeListacc.concat(
-        articleUse.localCiteList
-          .map((localCite) => {
-            const articleSource = shownArticles.find(
-              (article) => article.DOI === localCite.citeDOI
-            );
-            if (articleSource !== undefined) {
-              return { from: articleUse.DOI, to: articleSource.DOI };
-            }
-            return null;
-          })
-          .filter(isNotNull)
-      ),
-    []
-  );
+  const edgeList = []
+  for (let articleUse of shownArticles){
+    for (let localCite of articleUse.localCiteList){
+      const articleSource = shownArticles.find((article)=>article.DOI==localCite.citeDOI)
+      if (articleSource !== undefined){
+        edgeList.push({from: articleUse.DOI, to: articleSource.DOI})
+      }
+    }
+  }
   return { nodes: nodeList, edges: edgeList };
 }
 
-const articles_cached = ref([]);
+const articles_cached:Ref<Article[]> = ref([]);
 
 onMounted(async () => {
   const db = new Dexie('article_database');
@@ -72,25 +64,31 @@ onMounted(async () => {
   const data = processShownArticles(nodeNum.value, articles_cached.value);
   const container = document.getElementById('mountNode');
   const options = {
+    physics: false,
     edges: {
       arrows: 'to',
     },
     layout: {
       hierarchical: {
+        levelSeparation: 100,
         enabled: true,
         direction: 'DU',
         sortMethod: 'directed',
+        nodeSpacing: 150,
       },
     },
   };
-  const network = new Network(container, data, options);
-  network.on('click', function (params) {
+  if (container !== null ){
+    const network = new Network(container, data, options);
+    network.on('click', function (params) {
     clickNode(params);
   });
+  }
+
 });
-function clickNode(params) {
+function clickNode(params:any) {
   const nodes = params.nodes;
-  if (nodes !== []) {
+  if (nodes?.length>0) {
     const node_DOI = nodes[0];
     const DOIBase64 = btoa(node_DOI);
     const detailPage = router.resolve({
@@ -104,6 +102,7 @@ function changeNodeNum() {
   const data = processShownArticles(nodeNum.value, articles_cached.value);
   const container = document.getElementById('mountNode');
   const options = {
+    physics: false,
     edges: {
       arrows: 'to',
     },
@@ -112,13 +111,17 @@ function changeNodeNum() {
         enabled: true,
         direction: 'DU',
         sortMethod: 'directed',
+        levelSeparation: 100,
+        nodeSpacing: 150,
       },
     },
   };
-  const network = new Network(container, data, options);
-  network.on('click', function (params) {
+  if (container !== null ){
+    const network = new Network(container, data, options);
+    network.on('click', function (params) {
     clickNode(params);
   });
+  }
 }
 </script>
 

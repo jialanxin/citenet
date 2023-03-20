@@ -67,7 +67,7 @@ const article = ref({
 
 onMounted(async () => {
   const route = useRoute();
-  const DOI = atob(route.params.doi);
+  const DOI = atob(route.params.doi as string);
   const db = new Dexie('article_database');
   db.version(1).stores({
     articles:

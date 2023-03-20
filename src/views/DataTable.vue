@@ -36,12 +36,12 @@
   </v-container>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { parseText, findLocalCite } from '../utils/textToArticles';
+import { ref,Ref } from 'vue';
+import { parseText, findLocalCite, Article } from '../utils/textToArticles';
 import Dexie from 'dexie';
 import { useRouter } from 'vue-router';
 const router = useRouter();
-function clickLine(event, value) {
+function clickLine(event:Event, value:any) {
   const DOI = value.item.value.DOI;
   const DOIBase64 = btoa(DOI);
   const detailPage = router.resolve({
@@ -66,7 +66,7 @@ function readText(file: Blob): Promise<string> {
   });
 }
 const ArrayOfFile = ref([]);
-const articles = ref([
+const articles:Ref<Article[]> = ref([
   {
     Title: 'See this before request or request failure',
     Year: 0,

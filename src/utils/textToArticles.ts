@@ -176,4 +176,4 @@ function findLocalCite(rawArticles: Article[]): Article[] {
   return localArticleList;
 }
 
-export { isNotNull, Article, parseText, findLocalCite };
+export { isNotNull, type Article,  parseText, findLocalCite };
