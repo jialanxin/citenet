@@ -120,7 +120,7 @@ async function clickUpload() {
   // console.log(localArticleList);
 }
 const search = ref('');
-const headers = ref([
+const headers: Ref<{title:string; key:string; algin?:string|undefined; sortable?:boolean|undefined}[]> = ref([
   {
     title: 'Title',
     align: 'start',
