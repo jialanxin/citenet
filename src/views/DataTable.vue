@@ -42,7 +42,7 @@ import Dexie from 'dexie';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 function clickLine(event:Event, value:any) {
-  const DOI = value.item.value.DOI;
+  const DOI = value.item.DOI;
   const DOIBase64 = btoa(DOI);
   const detailPage = router.resolve({
     name: 'Details',
