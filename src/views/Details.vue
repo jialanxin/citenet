@@ -48,7 +48,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import Dexie from 'dexie';
-import last from 'lodash/last';
+import { last } from 'lodash';
 const article = ref({
   Title: 'Title1',
   Author: 'Who1',

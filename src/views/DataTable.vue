@@ -129,6 +129,7 @@ const headers = ref([
   },
   { title: 'Auther', sortable: false, key: 'Author' },
   { title: 'Year', key: 'Year' },
+  { title: 'Journal', key: 'Journal'},
   { title: 'LCS', key: 'LCS' },
   { title: 'GCS', key: 'GCS' },
   { title: 'LCR', key: 'LCR' },
