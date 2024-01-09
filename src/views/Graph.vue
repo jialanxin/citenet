@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card
-      style="z-index:100;position:fixed"
+      style="z-index: 100; position: fixed"
       height="60"
       width="200"
       class="mt-4"
@@ -13,264 +13,126 @@
         @keydown.enter="changeNodeNum"
       />
     </v-card>
-    <div id="mountNode"/>
+    <div id="mountNode" />
   </div>
 </template>
-
-<script lang='ts'>
-import { Component, Vue } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { ref,Ref, onMounted, onUpdated } from 'vue';
+import { useRouter } from 'vue-router';
 import Dexie from 'dexie';
-import {
-  Graph, NodeConfig, EdgeConfig, IG6GraphEvent, Item,
-} from '@antv/g6/lib';
-import { Article, isNotNull } from '../logic/textToArticles';
+import { Article } from '../utils/textToArticles';
+import { DataSet, Network } from 'vis-network/standalone';
 
-@Component
-export default class GraphPage extends Vue {
-  private async processShownArticles(nodeNum: number): Promise<void> {
-    const shownArticles = this.articles.slice(0, nodeNum);
-    const nodeList: NodeConfig[] = shownArticles.map((articleUse) => ({
-      id: articleUse.DOI,
-      label: articleUse.Author,
-    }));
-    const edgeList: EdgeConfig[] = shownArticles.reduce(
-      (edgeListacc: EdgeConfig[], articleUse: Article) => edgeListacc.concat(
-        articleUse.localCiteList
-          .map((localCite) => {
-            const articleSource: Article|undefined = shownArticles.find(
-              (article) => article.DOI === localCite.citeDOI,
-            );
-            if (articleSource !== undefined) {
-              return { source: articleUse.DOI, target: articleSource.DOI };
-            }
-            return null;
-          })
-          .filter(isNotNull),
-      ),
-      [],
-    );
-    this.nodeList = nodeList;
-    this.edgeList = edgeList;
-  }
+const nodeNum = ref(10);
+const router = useRouter();
 
-  private async mounted(): Promise<void> {
-    if (this.$route.query.nodes == null) {
-      this.nodeNum = 10;
-    } else {
-      this.nodeNum = parseInt(this.$route.query.nodes as string, 10);
-    }
-    const db = new Dexie('article_database');
-    db.version(1).stores({
-      articles:
-        'Title,Journal,GCS,DOI,Year,Author,citeList,LCR,LCS,localCiteList,CR',
-    });
-    const articles = db.table('articles');
-    this.articles = await articles.toArray();
-    this.articles.sort((a, b) => {
-      if (a.LCR + a.LCS > b.LCR + b.LCS) {
-        return -1;
+function processShownArticles(nodeNum: number, articles_ordered:Article[]) {
+  const shownArticles = articles_ordered.slice(0, nodeNum);
+  const nodeList = shownArticles.map((articleUse) => ({
+    id: articleUse.DOI,
+    label: articleUse.Author,
+  }));
+  const edgeList = []
+  for (let articleUse of shownArticles){
+    for (let localCite of articleUse.localCiteList){
+      const articleSource = shownArticles.find((article)=>article.DOI==localCite.citeDOI)
+      if (articleSource !== undefined){
+        edgeList.push({from: articleUse.DOI, to: articleSource.DOI})
       }
-      return 1;
-    });
-    await this.processShownArticles(this.nodeNum);
-    this.graph = new Graph({
-      container: 'mountNode',
-      width: window.innerWidth,
-      height: window.innerHeight - 64,
-      fitView: true,
-      fitViewPadding: [20, 20, 20, 20],
-      layout: {
-        type: 'dagre',
-        preventOverlap: true,
-        rankdir: 'BT',
-      },
-      defaultNode: {
-        size: 50,
-        style: {},
-        labelCfg: {
-          style: {
-            stroke: 'none',
-            fill: 'black',
-          },
-        },
-      },
-      defaultEdge: {
-        style: {
-          endArrow: true,
-          opacity: 1,
-          stroke: 'black',
-        },
-      },
-      modes: {
-        default: ['drag-canvas', 'zoom-canvas'], // 允许拖拽画布、放缩画布、拖拽节点
-      },
-    });
-    this.graph.data({ nodes: this.nodeList, edges: this.edgeList });
-    this.graph.render();
-    this.graph.on('node:click', (e: IG6GraphEvent) => {
-      const clickNodes = this.graph.findAllByState('node', 'click');
-      clickNodes.forEach((cn) => {
-        this.graph.setItemState(cn, 'click', false);
-      });
-      const nodeItem = e.item as Item;
-      this.graph.setItemState(nodeItem, 'click', true);
-      const doi: string = nodeItem.getID();
-      const detailPage = this.$router.resolve({
-        name: 'Details',
-        params: { doi },
-      });
-      window.open(detailPage.href, '_blank');
-    });
+    }
   }
+  return { nodes: nodeList, edges: edgeList };
+}
 
-  private changeNodeNum(): void {
-    this.$router.replace({ name: 'Graph', query: { nodes: this.nodeNum.toString(10) } });
-    this.processShownArticles(this.nodeNum);
-    this.graph.data({ nodes: this.nodeList, edges: this.edgeList });
-    this.graph.render();
-  }
+const articles_cached:Ref<Article[]> = ref([]);
 
-  nodeNum = 10;
-
-  articles: Article[] = [];
-
-  graph: Graph = new Graph({
-    container: 'mountNode',
-    width: window.innerWidth,
-    height: window.innerHeight - 64,
+onMounted(async () => {
+  const db = new Dexie('article_database');
+  db.version(1).stores({
+    articles:
+      'Title,Journal,GCS,DOI,Year,Author,citeList,LCR,LCS,localCiteList,CR',
   });
+  const articles_table = db.table('articles');
+  const articles_unordered = await articles_table.toArray();
+  const articles_ordered = articles_unordered.sort((a, b) => {
+    if (a.LCR + a.LCS > b.LCR + b.LCS) {
+      return -1;
+    }
+    return 1;
+  });
+  articles_cached.value = articles_ordered;
+  const data = processShownArticles(nodeNum.value, articles_cached.value);
+  const container = document.getElementById('mountNode');
+  const options = {
+    physics: false,
+    edges: {
+      arrows: 'to',
+    },
+    layout: {
+      hierarchical: {
+        levelSeparation: 100,
+        enabled: true,
+        direction: 'DU',
+        sortMethod: 'directed',
+        nodeSpacing: 150,
+      },
+    },
+  };
+  if (container !== null ){
+    const network = new Network(container, data, options);
+    network.on('click', function (params) {
+    clickNode(params);
+  });
+  }
 
-  nodeList: NodeConfig[] = [
-    {
-      id: '10.1038/NNANO.2014.167',
-      label: 'See these before request or request failure',
+});
+function clickNode(params:any) {
+  const nodes = params.nodes;
+  if (nodes?.length>0) {
+    const node_DOI = nodes[0];
+    const DOIBase64 = btoa(node_DOI);
+    const detailPage = router.resolve({
+      name: 'Details',
+      params: { doi: DOIBase64 },
+    });
+    window.open(detailPage.href, '_blank');
+  }
+}
+function changeNodeNum() {
+  const data = processShownArticles(nodeNum.value, articles_cached.value);
+  const container = document.getElementById('mountNode');
+  const options = {
+    physics: false,
+    edges: {
+      arrows: 'to',
     },
-    {
-      id: '10.1103/PhysRevLett.108.196802',
-      label: 'Test Node',
+    layout: {
+      hierarchical: {
+        enabled: true,
+        direction: 'DU',
+        sortMethod: 'directed',
+        levelSeparation: 100,
+        nodeSpacing: 150,
+      },
     },
-    {
-      id: '10.1063/1.125474',
-      label: 'Test Node',
-    },
-    {
-      id: '10.1021/nn303973r',
-      label: 'Test Node',
-    },
-    {
-      id: '10.1021/nn404013d',
-      label: 'Test Node',
-    },
-    {
-      id: '10.1126/science.1235547',
-      label: 'Test Node',
-    },
-    {
-      id: '10.1021/nl302015v',
-      label: 'Test Node',
-    },
-    {
-      id: '10.1063/1.4922729',
-      label: 'Test Node',
-    },
-    {
-      id: '10.1126/sciadv.1601741',
-      label: 'Test Node',
-    },
-    {
-      id: '10.1063/1.1376663',
-      label: 'Test Node',
-    },
-    {
-      id: '10.1126/science.aao3503',
-      label: 'Test Node',
-    },
-    {
-      id: '10.1038/s41598-018-20810-6',
-      label: 'Test Node',
-    },
-    {
-      id: '10.1126/sciadv.1700518',
-      label: 'Test Node',
-    },
-    {
-      id: '10.1364/OL.44.004103',
-      label: 'Test Node',
-    },
-  ];
-
-  edgeList: EdgeConfig[] = [
-    {
-      source: '10.1126/sciadv.1601741',
-      target: '10.1063/1.4922729',
-    },
-    {
-      source: '10.1126/science.aao3503',
-      target: '10.1038/NNANO.2014.167',
-    },
-    {
-      source: '10.1126/sciadv.1601741',
-      target: '10.1038/NNANO.2014.167',
-    },
-    {
-      source: '10.1126/sciadv.1700518',
-      target: '10.1038/NNANO.2014.167',
-    },
-    {
-      source: '10.1126/sciadv.1601741',
-      target: '10.1021/nn404013d',
-    },
-    {
-      source: '10.1063/1.4922729',
-      target: '10.1021/nn404013d',
-    },
-    {
-      source: '10.1126/sciadv.1601741',
-      target: '10.1126/science.1235547',
-    },
-    {
-      source: '10.1038/NNANO.2014.167',
-      target: '10.1126/science.1235547',
-    },
-    {
-      source: '10.1038/s41598-018-20810-6',
-      target: '10.1021/nn303973r',
-    },
-    {
-      source: '10.1038/NNANO.2014.167',
-      target: '10.1021/nn303973r',
-    },
-    {
-      source: '10.1063/1.4922729',
-      target: '10.1021/nl302015v',
-    },
-    {
-      source: '10.1126/science.aao3503',
-      target: '10.1103/PhysRevLett.108.196802',
-    },
-    {
-      source: '10.1038/s41598-018-20810-6',
-      target: '10.1103/PhysRevLett.108.196802',
-    },
-    {
-      source: '10.1126/sciadv.1700518',
-      target: '10.1103/PhysRevLett.108.196802',
-    },
-    {
-      source: '10.1364/OL.44.004103',
-      target: '10.1063/1.1376663',
-    },
-    {
-      source: '10.1364/OL.44.004103',
-      target: '10.1063/1.125474',
-    },
-    {
-      source: '10.1063/1.1376663',
-      target: '10.1063/1.125474',
-    },
-  ];
+  };
+  if (container !== null ){
+    const network = new Network(container, data, options);
+    network.on('click', function (params) {
+    clickNode(params);
+  });
+  }
 }
 </script>
 
-<style>
+<style scoped>
+#mountNode {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
 </style>
